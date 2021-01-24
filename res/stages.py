@@ -142,9 +142,11 @@ class MainStage(MetaStage):
 class Menu(MetaStage):
     def __init__(self, window):
         super().__init__(window)
-        self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Hack-bias", WIDTH / 2, WIDTH / 16, 'title')
-        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8,
-                               'text')
+        self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Bias Hack", WIDTH / 2, WIDTH / 16, 'title')
+        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Welcome to Bias Hack Court! You will be responsible for deciding which of the 5 suspects "
+                                                                "are guilty. Beware: there are hidden biases in the evidence that could lead to a wrong conviction. "
+                                                                "You are also a busy judge, so there is a limited amount of time for each case."
+                                                                "Good luck! Click the gavel to start.", WIDTH / 2, HEIGHT / 3, 'text')
         self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH,
                                    0.2 * HEIGHT, 'button')
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
