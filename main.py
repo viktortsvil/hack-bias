@@ -6,7 +6,6 @@ class Timer:
     def __init__(self, init_mins, init_secs):
         pass
 
-
 class CanvasObject:
     def __init__(self, canvas, path, x, y, width, height, tag):  # x,y -> center of the image
         self.x = int(x)
@@ -30,6 +29,12 @@ class MetaStage:
         self.bg_canvas = tk.Canvas(window)
         self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'bcg')
 
+class Popup:
+    def __init__(self, window, path):
+        scalefactor = 0.7 #scale to take up part of the screen
+        self.window = window
+        self.bg_canvas = tk.Canvas(window)
+        self.object = CanvasObject(self.bg_canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
 
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
@@ -47,6 +52,8 @@ class MainStage(MetaStage):
 
         self.blur = None
 
+        self.overlay = None
+
         self.characters = []
         for i in range(len(self.character_names)):
             self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
@@ -62,18 +69,19 @@ class MainStage(MetaStage):
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                #self.
-                #self.bg_canvas.delete(char.object)
-
-
-
-
+                scalefactor = 0.7
+                #self.overlay = Popup(self.bg_canvas "img/characters/John_Lincoln.png") not sure why this doesn't work
+                self.overlay = CanvasObject(self.bg_canvas, "img/characters/John_Lincoln.png", WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
 
 root = tk.Tk()
-root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
 
-WIDTH = root.winfo_screenwidth()
-HEIGHT = root.winfo_screenheight()
+#WIDTH = root.winfo_screenwidth()
+#HEIGHT = root.winfo_screenheight()
+
+WIDTH = 1920
+HEIGHT = 1080
+
+root.geometry(f"{WIDTH}x{HEIGHT}+0+0")
 
 root.attributes("-fullscreen", 1)
 root.resizable(width=False, height=False)
