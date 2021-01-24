@@ -39,7 +39,6 @@ class CanvasText:
     font = 'FreeMono'
 
     def __init__(self, canvas, size, text, x, y, tag):
-        print(tkinter.font.families())
         self.x = int(x)
         self.y = int(y)
         self.tag = tag
@@ -57,11 +56,17 @@ class MetaStage:
 
 class Popup:
     def __init__(self, canvas, path):
-        scalefactor = 0.7  # scale to take up part of the screen
-
+        scalefactor = 0.9  # scale to take up part of the screen
         self.object = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                    HEIGHT * scalefactor, 'popup')
 
+class Menu(MetaStage):
+    def __init__(self, window):
+        super().__init__(window)
+        self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Hack-bias", WIDTH / 2, WIDTH / 16, 'title')
+        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8, 'text')
+        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH, 0.2 * HEIGHT, 'button')
+        self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
@@ -96,13 +101,8 @@ class MainStage(MetaStage):
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                scalefactor = 0.7
-                self.overlay = Popup(self.bg_canvas, "img/characters/John_Lincoln.png")# not sure why this doesn't work
-                #self.overlay = CanvasObject(self.bg_canvas, "img/characters/John_Lincoln.png", WIDTH / 2, HEIGHT / 2,
-                 #                           WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
-
+                self.overlay = Popup(self.bg_canvas, "img/characters/John_Lincoln.png")
                 self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
-
 
 root = tk.Tk()
 WIDTH = root.winfo_screenwidth()
