@@ -10,13 +10,15 @@ class MyTimer:
         self.time_four = args[4]
         self.WIDTH = args[5]
         self.HEIGHT = args[6]
+        self.if_out = args[7]
+        self.window = args[8]
 
     def countdown(self, remaining=None):
         if remaining is not None:
             self.remaining = remaining
 
         if self.remaining <= 0:
-            pass
+            self.if_out(self.window, False)
         else:
             self.remaining = self.remaining - 1
             self.bg_canvas.after(1000, self.countdown)

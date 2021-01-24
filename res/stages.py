@@ -6,6 +6,8 @@ from .entities import Suspect
 WIDTH = None
 HEIGHT = None
 
+currentStage = None
+
 class CanvasObject:
     def __init__(self, canvas, path, x, y, width, height, tag):  # x,y -> center of the image
         self.x = int(x)
@@ -21,6 +23,7 @@ class CanvasObject:
             return True
         return False
 
+
 class CanvasText:
     font = 'FreeMono'
 
@@ -29,23 +32,24 @@ class CanvasText:
         self.y = int(y)
         self.tag = tag
         self.text = text
-        self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text, width=0.5*WIDTH)
+        self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text,
+                                         width=0.5 * WIDTH)
 
 
 class MetaStage:
     def __init__(self, window):
-        global WIDTH, HEIGHT
+        global WIDTH, HEIGHT, currentStage
         WIDTH = window.winfo_screenwidth()
         HEIGHT = window.winfo_screenheight()
         self.window = window
         self.bg_canvas = tk.Canvas(window)
         self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT,
                                        'bcg')
+        currentStage = self
 
 
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
-
 
     def __init__(self, window, level=1):
         super().__init__(window)
@@ -53,12 +57,16 @@ class MainStage(MetaStage):
         for i in range(5):
             self.suspects.append(Suspect(level, i + 1))
 
+        self.mode = "Studying Case"
+
         self.judge = CanvasObject(self.bg_canvas, "img/judge.png", WIDTH / 2, 0.825 * HEIGHT, 0.3 * WIDTH,
                                   0.35 * HEIGHT, "judge")
         self.evidence = CanvasObject(self.bg_canvas, "img/folder.png", 0.226 * WIDTH, 0.718 * HEIGHT, 0.109 * WIDTH,
                                      0.257 * HEIGHT, 'evidence')
         self.decide = CanvasObject(self.bg_canvas, "img/gavel.png", 0.786 * WIDTH, 0.733 * HEIGHT, 0.163 * WIDTH,
                                    0.244 * HEIGHT, 'decide')
+        self.bg_canvas.tag_bind(self.decide.tag, '<ButtonPress-1>', self.use_gavel)
+
         self.lineup = CanvasObject(self.bg_canvas, "img/lineup.png", 0.5 * WIDTH, 0.375 * HEIGHT, 0.6 * WIDTH,
                                    0.35 * HEIGHT, 'lineup')
         self.time_one = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.811 * WIDTH, 0.1 * HEIGHT, 0.046 * WIDTH,
@@ -81,36 +89,54 @@ class MainStage(MetaStage):
         self.backbutton = None
         self.text = None
 
+        self.judge_text = None
+
         for i in range(5):
             self.suspects[i].lineup_image = CanvasObject(self.bg_canvas, self.suspects[i].lineup_path,
-                                                self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
-                                                self.lineup.y,
-                                                self.lineup.width / 5, self.lineup.height, 'char' + str(i))
-            self.bg_canvas.tag_bind(self.suspects[i].lineup_image.tag, '<ButtonPress-1>', self.func)
+                                                         self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
+                                                         self.lineup.y,
+                                                         self.lineup.width / 5, self.lineup.height, 'char' + str(i))
+            self.bg_canvas.tag_bind(self.suspects[i].lineup_image.tag, '<ButtonPress-1>', self.choose_suspect)
 
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
-        my_args = [self.bg_canvas, self.time_one, self.time_two, self.time_three, self.time_four, WIDTH, HEIGHT]
+        my_args = [self.bg_canvas, self.time_one, self.time_two, self.time_three, self.time_four, WIDTH, HEIGHT,
+                   EndGameStage, self.window]
         new_timer = MyTimer(my_args)
 
-        new_timer.countdown(80)
+        new_timer.countdown(10)
 
-    def func(self, event):
+    def choose_suspect(self, event):
         for char in self.suspects:
             if char.lineup_image.overlap(event.x, event.y):
-                self.overlay = Popup(self.bg_canvas, char)
+                if self.mode == "Studying Case":
+                    self.overlay = Popup(self.bg_canvas, char)
+                elif self.mode == "Judging":
+                    print("Judging")
+                    EndGameStage(self.window, True)   # change from always winning to actually checking who won
+
+    def use_gavel(self, event):
+        if self.mode == "Studying Case":
+            self.mode = "Judging"
+            self.judge_text = CanvasText(self.bg_canvas, 50, "Time to Judge", WIDTH / 2, 0.10 * HEIGHT, "judgetime")
+        else:
+            self.mode = "Studying Case"
+            self.bg_canvas.delete(self.judge_text.object)
+
 
 class Menu(MetaStage):
     def __init__(self, window):
         super().__init__(window)
         self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Hack-bias", WIDTH / 2, WIDTH / 16, 'title')
-        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8, 'text')
-        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH, 0.2 * HEIGHT, 'button')
+        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8,
+                               'text')
+        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH,
+                                   0.2 * HEIGHT, 'button')
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
         self.bg_canvas.tag_bind(self.button.tag, '<ButtonPress-1>', self.movetostage)
+
     def movetostage(self, event):
         if self.button.overlap(event.x, event.y):
-            global mainStage
-            mainStage = MainStage(self.window)
+            MainStage(self.window)
 
 
 class Popup:
@@ -120,16 +146,16 @@ class Popup:
 
         self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
-                                   HEIGHT * scalefactor, 'suscard')
-        self.name = CanvasText(canvas, 25, suspect.name, 0.62 * WIDTH, 0.35*HEIGHT, "susname")
-        self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38*HEIGHT, "susgender")
-        self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41*HEIGHT, "susage")
-        self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44*HEIGHT, "susrecord")
+                                 HEIGHT * scalefactor, 'suscard')
+        self.name = CanvasText(canvas, 25, suspect.name, 0.62 * WIDTH, 0.35 * HEIGHT, "susname")
+        self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
+        self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
+        self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
         self.biography_canvas = tk.Canvas(canvas)
         self.biography = CanvasText(self.biography_canvas, 25, suspect.biography, 100, 300, "susbio")
         self.biography_canvas.configure(scrollregion=canvas.bbox("all"))
 
-        self.biography_canvas.place(x=0.2*WIDTH, y=0.57*HEIGHT, width=0.4*WIDTH, height=0.4*HEIGHT)
+        self.biography_canvas.place(x=0.2 * WIDTH, y=0.57 * HEIGHT, width=0.4 * WIDTH, height=0.4 * HEIGHT)
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
@@ -142,3 +168,14 @@ class Popup:
                     else:
                         self.canvas.delete(self.__getattribute__(attr).object)
         self.biography_canvas.destroy()
+
+
+class EndGameStage(MetaStage):
+    def __init__(self, window, win):
+        super().__init__(window)
+        if win:
+            self.outcome = CanvasText(self.bg_canvas, 50, "WON", WIDTH / 2, HEIGHT / 2, 'outcome')
+        else:
+            self.outcome = CanvasText(self.bg_canvas, 50, "LOSS", WIDTH / 2, HEIGHT / 2, 'outcome')
+
+        self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
