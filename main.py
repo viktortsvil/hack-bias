@@ -26,14 +26,13 @@ class MyTimer:
             self.bg_canvas.after(1000, self.countdown)
             self.time_to_img(self.remaining)
 
-
     def time_to_img(self, time_in_sec):
         self.numbers = dict()
-        self.minutes = list(str(math.floor(time_in_sec/60)))
-        self.seconds = list(str(time_in_sec - 60*math.floor(time_in_sec/60)))
+        self.minutes = list(str(math.floor(time_in_sec / 60)))
+        self.seconds = list(str(time_in_sec - 60 * math.floor(time_in_sec / 60)))
         self.minutes = self.add_zero(self.minutes)
         self.seconds = self.add_zero(self.seconds)
-        self.image_path = "img/time/%s_Red.png"%self.seconds[1]
+        self.image_path = "img/time/%s_Red.png" % self.seconds[1]
         print(self.image_path)
         self.get_images()
         print(self.numbers)
@@ -45,12 +44,14 @@ class MyTimer:
     def get_images(self):
         for i in range(10):
             self.numbers[str(i)] = ImageTk.PhotoImage(Image.open("img/time/%s_Red.png" % i).resize((int(0.046 * WIDTH),
-                                     int(0.049 * HEIGHT))))
+                                                                                                    int(
+                                                                                                        0.049 * HEIGHT))))
 
     def add_zero(self, string_list):
         if len(string_list) < 2:
             string_list.insert(0, "0")
         return string_list
+
 
 class CanvasObject:
     def __init__(self, canvas, path, x, y, width, height, tag):  # x,y -> center of the image
@@ -78,8 +79,6 @@ class Suspect:
         lineupfiles = [f for f in listdir(lineuppath) if isfile(join(lineuppath, f))]
         photocardfiles = [f for f in listdir(photocardpath) if isfile(join(photocardpath, f))]
 
-
-
     def __init__(self, name, age, sex, race, lineup_path, card_path, biography, evidence):
         self.name = name
         self.age = age
@@ -89,9 +88,6 @@ class Suspect:
         self.card_path = card_path
         self.biography = biography
         self.evidence = evidence
-
-
-
 
 
 class CanvasText:
@@ -137,17 +133,18 @@ class MainStage(MetaStage):
         self.lineup = CanvasObject(self.bg_canvas, "img/lineup.png", 0.5 * WIDTH, 0.375 * HEIGHT, 0.6 * WIDTH,
                                    0.35 * HEIGHT, 'lineup')
         self.time_one = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.811 * WIDTH, 0.1 * HEIGHT, 0.046 * WIDTH,
-                                   0.052 * HEIGHT, 'time_one')
+                                     0.052 * HEIGHT, 'time_one')
         self.time_two = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.846 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
                                      0.06 * HEIGHT, 'time_two')
-        self.time_column = CanvasObject(self.bg_canvas, "img/time/two_dots_Red.png", 0.871 * WIDTH, 0.1 * HEIGHT, 0.02 * WIDTH,
-                                     0.06 * HEIGHT, 'time_column')
+        self.time_column = CanvasObject(self.bg_canvas, "img/time/two_dots_Red.png", 0.871 * WIDTH, 0.1 * HEIGHT,
+                                        0.02 * WIDTH,
+                                        0.06 * HEIGHT, 'time_column')
         self.time_three = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.892 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
-                                     0.06 * HEIGHT, 'time_three')
+                                       0.06 * HEIGHT, 'time_three')
         self.time_four = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.931 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
-                                     0.06 * HEIGHT, 'time_four')
+                                      0.06 * HEIGHT, 'time_four')
         self.clock = CanvasObject(self.bg_canvas, "img/Clock.png", 0.971 * WIDTH, 0.093 * HEIGHT, 0.04 * WIDTH,
-                                     0.075 * HEIGHT, 'clock')
+                                  0.075 * HEIGHT, 'clock')
 
         self.blur = None
 
@@ -167,19 +164,15 @@ class MainStage(MetaStage):
 
         new_timer.countdown(80)
 
-
-
-
     def func(self, event):
         for char in self.characters:
             if char.overlap(event.x, event.y):
-                self.bg_canvas.delete(char.object)
-
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
                 scalefactor = 0.7
-                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/John_Lincoln.png")
-                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/1John_Lincoln.png")
+                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT,
+                                       "text")
 
 
 root = tk.Tk()
@@ -195,5 +188,3 @@ root.resizable(width=False, height=False)
 mainStage = MainStage(root)
 
 root.mainloop()
-
-
