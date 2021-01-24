@@ -179,7 +179,10 @@ class Popup:
         for attr in dir(self):
             if not attr.startswith("_") and not attr.endswith("canvas"):
                 if not callable(self.__getattribute__(attr)):
-                    self.canvas.delete(self.__getattribute__(attr).object)
+                    try:
+                        self.canvas.delete(self.__getattribute__(attr).object)
+                    except:
+                        pass
 
 class EndGameStage(MetaStage):
     def __init__(self, window, win, level):
