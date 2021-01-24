@@ -138,7 +138,7 @@ class MainStage(MetaStage):
 
     def police_report(self, event):
         if self.evidence.overlap(event.x, event.y):
-            self.overlay = Report(self.bg_canvas, "img/characters/photocards/1/1.png", "cases/1/description.txt")
+            self.overlay = Report(self.bg_canvas, "img/background.jpg", self.case.desc)
 
 
 class Menu(MetaStage):
@@ -197,10 +197,8 @@ class Report:
         self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                  HEIGHT * scalefactor, 'card')
-        descriptiontext = open(description)
-        lines = descriptiontext.readlines()
-        self.text = CanvasText(self.canvas, 25, lines[1], 0.66 * WIDTH, 0.42 * HEIGHT, "text")
-        self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
+        self.text = CanvasText(self.canvas, 30, description, 0.5 * WIDTH, 0.5 * HEIGHT, "text")
+        self.backbutton = CanvasObject(canvas, "img/back-button.png", 0.845*WIDTH, 0.2*HEIGHT, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
     def back(self, event):
