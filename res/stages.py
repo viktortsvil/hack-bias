@@ -161,15 +161,17 @@ class Popup:
     def __init__(self, canvas, suspect):
         scalefactor = 0.9  # scale to take up part of the screen
         self.canvas = canvas
+        self.wheight = self.canvas.winfo_height()
+        self.fontsize = int(25 * self.wheight / 1080)
 
         self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                  HEIGHT * scalefactor, 'suscard')
-        self.name = CanvasText(canvas, 25, suspect.name, 0.62 * WIDTH, 0.35 * HEIGHT, "susname")
-        self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
-        self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
-        self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
-        self.biography = CanvasText(self.canvas, 25, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT, "susbio")
+        self.name = CanvasText(canvas, self.fontsize, suspect.name, 0.62 * WIDTH, 0.35 * HEIGHT, "susname")
+        self.gender = CanvasText(canvas, self.fontsize, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
+        self.age = CanvasText(canvas, self.fontsize, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
+        self.record = CanvasText(canvas, self.fontsize, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
+        self.biography = CanvasText(self.canvas, self.fontsize, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT, "susbio")
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
