@@ -138,7 +138,7 @@ class MainStage(MetaStage):
 
     def police_report(self, event):
         if self.evidence.overlap(event.x, event.y):
-            self.overlay = Report(self.bg_canvas, "img/background.jpg", self.case.desc)
+            self.overlay = Report(self.bg_canvas, "img/folder_background.png", self.case.desc)
 
 
 class Menu(MetaStage):
@@ -197,7 +197,7 @@ class Report:
         self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                  HEIGHT * scalefactor, 'card')
-        self.text = CanvasText(self.canvas, 30, description, 0.5 * WIDTH, 0.5 * HEIGHT, "text")
+        self.text = CanvasText(self.canvas, 30, description, 0.5 * WIDTH, 0.5 * HEIGHT, "text", 1300)
         self.backbutton = CanvasObject(canvas, "img/back-button.png", 0.845*WIDTH, 0.2*HEIGHT, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
@@ -221,8 +221,9 @@ class EndGameStage(MetaStage):
                                      0.22 * WIDTH, 0.28 * HEIGHT, 'blurnl')
             self.bg_canvas.tag_bind(self.next.object, "<ButtonPress-1>", self.nextlevel)
         else:
-            self.next = CanvasText(self.bg_canvas, 60, "You Reached The End Of The Game!", WIDTH / 2, 0.7 * HEIGHT,
-                                   "endgame")
+            pass
+            #self.next = CanvasText(self.bg_canvas, 60, "You Reached The End Of The Game!", WIDTH / 2, 0.7 * HEIGHT,
+            #                       "endgame")
         self.level = level
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
 
