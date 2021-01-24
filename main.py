@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+import tkinter.font
 from PIL import Image, ImageTk
 import time
 
@@ -54,6 +55,7 @@ class MyTimer:
         return string_list
 
 
+
 class CanvasObject:
     def __init__(self, canvas, path, x, y, width, height, tag):  # x,y -> center of the image
         self.x = int(x)
@@ -63,19 +65,55 @@ class CanvasObject:
         self.tag = tag
         self.image = ImageTk.PhotoImage(Image.open(path).resize((self.width, self.height), Image.ANTIALIAS))
         self.object = canvas.create_image(self.x, self.y, image=self.image, tag=tag)
-        #print(self.object)
+        # print(self.object)
 
     def overlap(self, x, y):
-        if self.x - self.width / 2 <= x <= self.x + self.width / 2 and self.y - self.height / 2 <= y <= self.y + self.height/2:
+        if self.x - self.width / 2 <= x <= self.x + self.width / 2 and self.y - self.height / 2 <= y <= self.y + self.height / 2:
             return True
         return False
+
+
+class Suspect:
+    def __init__(self, name, age, sex, race, lineup_path, card_path, biography, evidence):
+        self.name = name
+        self.age = age
+        self.sex = sex
+        self.race = race
+        self.lineup_path = lineup_path
+        self.card_path = card_path
+        self.biography = biography
+        self.evidence = evidence
+
+
+
+
+
+class CanvasText:
+    font = 'FreeMono'
+
+    def __init__(self, canvas, size, text, x, y, tag):
+        print(tkinter.font.families())
+        self.x = int(x)
+        self.y = int(y)
+        self.tag = tag
+        self.text = text
+        self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text)
 
 
 class MetaStage:
     def __init__(self, window):
         self.window = window
         self.bg_canvas = tk.Canvas(window)
-        self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'bcg')
+        self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT,
+                                       'bcg')
+
+
+class Popup:
+    def __init__(self, canvas, path):
+        scalefactor = 0.7  # scale to take up part of the screen
+
+        self.object = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
+                                   HEIGHT * scalefactor, 'popup')
 
 
 class MainStage(MetaStage):
@@ -104,9 +142,14 @@ class MainStage(MetaStage):
                                      0.06 * HEIGHT, 'time_four')
         self.clock = CanvasObject(self.bg_canvas, "img/clock.png", 0.971 * WIDTH, 0.093 * HEIGHT, 0.04 * WIDTH,
                                      0.075 * HEIGHT, 'clock')
+
+        self.blur = None
+
+        self.overlay = None
+
         self.characters = []
         for i in range(len(self.character_names)):
-            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
+            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/lineups/" + self.character_names[i],
                                                 self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
                                                 self.lineup.y,
                                                 self.lineup.width / 5, self.lineup.height, 'char' + str(i)))
@@ -126,13 +169,18 @@ class MainStage(MetaStage):
             if char.overlap(event.x, event.y):
                 self.bg_canvas.delete(char.object)
 
+                self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
+                                         self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
+                scalefactor = 0.7
+                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/John_Lincoln.png")
+                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
 
 
 root = tk.Tk()
-root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
-
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
+
+root.geometry(f"{WIDTH}x{HEIGHT}+0+0")
 
 root.attributes("-fullscreen", 1)
 root.resizable(width=False, height=False)
