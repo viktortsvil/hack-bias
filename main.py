@@ -107,9 +107,9 @@ class MetaStage:
 
 
 class Popup:
-    def __init__(self, canvas, path):
+    def __init__(self, canvas, suspect):
         scalefactor = 0.9  # scale to take up part of the screen
-        self.object = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
+        self.object = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                    HEIGHT * scalefactor, 'popup')
 
 
@@ -177,12 +177,7 @@ class MainStage(MetaStage):
             if char.lineup_image.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                self.overlay = Popup(self.bg_canvas, char.card_path)
-                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
-                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
-                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
-                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
-                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                self.overlay = Popup(self.bg_canvas, char)
 
 
 root = tk.Tk()
