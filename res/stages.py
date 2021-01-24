@@ -25,15 +25,15 @@ class CanvasObject:
 
 
 class CanvasText:
-    font = 'FreeMono'
+    font = 'Courier'
 
-    def __init__(self, canvas, size, text, x, y, tag):
+    def __init__(self, canvas, size, text, x, y, tag, width=900):
         self.x = int(x)
         self.y = int(y)
         self.tag = tag
         self.text = text
         self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text,
-                                         width=0.5 * WIDTH)
+                                         width=width)
 
 
 class MetaStage:
@@ -114,7 +114,7 @@ class MainStage(MetaStage):
                    EndGameStage, self.window, level]
         new_timer = MyTimer(my_args)
 
-        new_timer.countdown(80)
+        new_timer.countdown(240)
 
     def choose_suspect(self, event):
         for char in self.suspects:
@@ -169,7 +169,7 @@ class Popup:
         self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
         self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
         self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
-        self.biography = CanvasText(self.canvas, 25, suspect.biography, 0.66 * WIDTH, 0.62 * HEIGHT, "susbio")
+        self.biography = CanvasText(self.canvas, 25, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT, "susbio")
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
@@ -183,9 +183,10 @@ class EndGameStage(MetaStage):
     def __init__(self, window, win, level):
         super().__init__(window)
         if win:
-            self.outcome = CanvasText(self.bg_canvas, 50, "WON", WIDTH / 2, HEIGHT / 2, 'outcome')
+            self.outcome = CanvasObject(self.bg_canvas, "img/win.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'outcome')
         else:
-            self.outcome = CanvasText(self.bg_canvas, 50, "LOSS", WIDTH / 2, HEIGHT / 2, 'outcome')
+            self.outcome = CanvasObject(self.bg_canvas, "img/lose.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'outcome')
+
         if level < 3:
             self.next = CanvasObject(self.bg_canvas, "img/background.jpg",
                                      WIDTH / 2, 0.7 * HEIGHT, 0.2*WIDTH, 0.2 * HEIGHT, "nextlevel")
