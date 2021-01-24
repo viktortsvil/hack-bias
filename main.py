@@ -1,6 +1,56 @@
 import tkinter as tk
+import math
 import tkinter.font
 from PIL import Image, ImageTk
+from os import listdir
+from os.path import isfile, join
+import time
+
+
+class MyTimer:
+    def __init__(self, args):
+        self.bg_canvas = args[0]
+        self.time_one = args[1]
+        self.time_two = args[2]
+        self.time_three = args[3]
+        self.time_four = args[4]
+
+    def countdown(self, remaining=None):
+        if remaining is not None:
+            self.remaining = remaining
+
+        if self.remaining <= 0:
+            pass
+        else:
+            self.remaining = self.remaining - 1
+            self.bg_canvas.after(1000, self.countdown)
+            self.time_to_img(self.remaining)
+
+    def time_to_img(self, time_in_sec):
+        self.numbers = dict()
+        self.minutes = list(str(math.floor(time_in_sec / 60)))
+        self.seconds = list(str(time_in_sec - 60 * math.floor(time_in_sec / 60)))
+        self.minutes = self.add_zero(self.minutes)
+        self.seconds = self.add_zero(self.seconds)
+        self.image_path = "img/time/%s_Red.png" % self.seconds[1]
+        print(self.image_path)
+        self.get_images()
+        print(self.numbers)
+        self.bg_canvas.itemconfig(self.time_one.tag, image=self.numbers[self.minutes[0]])
+        self.bg_canvas.itemconfig(self.time_two.tag, image=self.numbers[self.minutes[1]])
+        self.bg_canvas.itemconfig(self.time_three.tag, image=self.numbers[self.seconds[0]])
+        self.bg_canvas.itemconfig(self.time_four.tag, image=self.numbers[self.seconds[1]])
+
+    def get_images(self):
+        for i in range(10):
+            self.numbers[str(i)] = ImageTk.PhotoImage(Image.open("img/time/%s_Red.png" % i).resize((int(0.046 * WIDTH),
+                                                                                                    int(
+                                                                                                        0.049 * HEIGHT))))
+
+    def add_zero(self, string_list):
+        if len(string_list) < 2:
+            string_list.insert(0, "0")
+        return string_list
 
 
 class CanvasObject:
@@ -21,6 +71,14 @@ class CanvasObject:
 
 
 class Suspect:
+
+    @staticmethod
+    def parse(round=1):
+        lineuppath = 'img/characters/lineups/'
+        photocardpath = 'img/characters/photocards'
+        lineupfiles = [f for f in listdir(lineuppath) if isfile(join(lineuppath, f))]
+        photocardfiles = [f for f in listdir(photocardpath) if isfile(join(photocardpath, f))]
+
     def __init__(self, name, age, sex, race, lineup_path, card_path, biography, evidence):
         self.name = name
         self.age = age
@@ -30,9 +88,6 @@ class Suspect:
         self.card_path = card_path
         self.biography = biography
         self.evidence = evidence
-
-
-
 
 
 class CanvasText:
@@ -73,6 +128,7 @@ class MainStage(MetaStage):
 
     def __init__(self, window):
         super().__init__(window)
+
         self.judge = CanvasObject(self.bg_canvas, "img/judge.png", WIDTH / 2, 0.825 * HEIGHT, 0.3 * WIDTH,
                                   0.35 * HEIGHT, "judge")
         self.evidence = CanvasObject(self.bg_canvas, "img/folder.png", 0.226 * WIDTH, 0.718 * HEIGHT, 0.109 * WIDTH,
@@ -81,6 +137,19 @@ class MainStage(MetaStage):
                                    0.244 * HEIGHT, 'decide')
         self.lineup = CanvasObject(self.bg_canvas, "img/lineup.png", 0.5 * WIDTH, 0.375 * HEIGHT, 0.6 * WIDTH,
                                    0.35 * HEIGHT, 'lineup')
+        self.time_one = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.811 * WIDTH, 0.1 * HEIGHT, 0.046 * WIDTH,
+                                     0.052 * HEIGHT, 'time_one')
+        self.time_two = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.846 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
+                                     0.06 * HEIGHT, 'time_two')
+        self.time_column = CanvasObject(self.bg_canvas, "img/time/two_dots_Red.png", 0.871 * WIDTH, 0.1 * HEIGHT,
+                                        0.02 * WIDTH,
+                                        0.06 * HEIGHT, 'time_column')
+        self.time_three = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.892 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
+                                       0.06 * HEIGHT, 'time_three')
+        self.time_four = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.931 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
+                                      0.06 * HEIGHT, 'time_four')
+        self.clock = CanvasObject(self.bg_canvas, "img/Clock.png", 0.971 * WIDTH, 0.093 * HEIGHT, 0.04 * WIDTH,
+                                  0.075 * HEIGHT, 'clock')
 
         self.blur = None
 
@@ -88,23 +157,30 @@ class MainStage(MetaStage):
 
         self.characters = []
         for i in range(len(self.character_names)):
-            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
+            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/lineups/" + self.character_names[i],
                                                 self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
                                                 self.lineup.y,
                                                 self.lineup.width / 5, self.lineup.height, 'char' + str(i)))
             self.bg_canvas.tag_bind(self.characters[-1].tag, '<ButtonPress-1>', self.func)
 
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
+        my_args = [self.bg_canvas, self.time_one, self.time_two, self.time_three, self.time_four]
+        new_timer = MyTimer(my_args)
+
+        new_timer.countdown(80)
 
     def func(self, event):
         for char in self.characters:
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                self.overlay = Popup(self.bg_canvas, "img/characters/John_Lincoln.png")
-                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                scalefactor = 0.7
+                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/1John_Lincoln.png")
+                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT,
+                                       "text")
 
 root = tk.Tk()
+Suspect.parse()
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
 
