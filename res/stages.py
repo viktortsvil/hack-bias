@@ -103,7 +103,7 @@ class MainStage(MetaStage):
                    EndGameStage, self.window]
         new_timer = MyTimer(my_args)
 
-        new_timer.countdown(10)
+        new_timer.countdown(80)
 
     def choose_suspect(self, event):
         for char in self.suspects:
