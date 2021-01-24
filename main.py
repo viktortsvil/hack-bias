@@ -14,8 +14,10 @@ def rtoa(val, w=True):  # relative coordinate to absolute
         return val * WIDTH
     return val * HEIGHT
 
-def upload_image(name, width, height, alpha=1):
-    pass
+
+class Timer:
+    def __init__(self, init_mins, init_secs):
+        pass
 
 
 class MainStage:
@@ -33,15 +35,19 @@ class MainStage:
         self.suspect_frame = tk.Frame(window, bg='blue')
         self.suspect_frame.place(relx=0.2, rely=0.05, width=rtoa(0.6), height=rtoa(0.3))
 
-        self.judge_canvas = tk.Canvas(window, bg='red')
-        #self.judge_canvas.
+        self.judge_canvas = tk.Canvas(window)
         self.judge_canvas.place(relx=0.35, rely=0.65, relwidth=0.3, relheight=0.35)
         self.judge_image = ImageTk.PhotoImage(Image.open("img/judge.png").resize((int(0.3*WIDTH), int(0.35*HEIGHT)), Image.ANTIALIAS))
         self.judge_canvas.create_image(int(0.3*WIDTH / 2), int(0.35*HEIGHT / 2), image=self.judge_image)
 
+        self.evidence_image = ImageTk.PhotoImage(Image.open("img/folder.png").resize((int(0.109*WIDTH), int(0.257*HEIGHT)), Image.ANTIALIAS))
+        self.evidence_btn = tk.Button(window, image=self.evidence_image, bg='white', command=None)
+        self.evidence_btn.place(relx=0.172, rely=0.667, relwidth=0.109, relheight=0.257)
 
+        self.decide_image = ImageTk.PhotoImage(Image.open("img/gavel.png").resize((int(0.163*WIDTH), int(0.244*HEIGHT)), Image.ANTIALIAS))
+        self.decide_btn = tk.Button(window, image=self.decide_image, bg='white', command=None)
+        self.decide_btn.place(relx=0.706, rely=0.671, relwidth=0.163, relheight=0.244)
 
-        print(self.suspect_frame.winfo_reqwidth())
         self.suspect_buttons = []
         for i in range(5):
             self.suspect_buttons.append(tk.Button(self.suspect_frame, text=f"Suspect{i+1}", fg='green', command=None,
@@ -52,7 +58,7 @@ class MainStage:
 
 
 root = tk.Tk()
-root.geometry(f"{root.winfo_screenwidth() - 3}x{root.winfo_screenheight() - 3}+0+0")
+root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
 
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
