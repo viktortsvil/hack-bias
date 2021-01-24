@@ -3,4 +3,4 @@ Gender: M
 Age: 29
 Race: Latino
 Criminal record: Petty Crime
-Fabian’s family immigrated to the US when he was 12. His father disappeared when he was 17, forcing Fabian to drop out of school and work at a fast food chain to support his sisters. \n Fabian was spotted running away from the scene of the crime, and his clothes matched the victim’s description of the aggressor. \n He has committed petty crime before as a minor, but has not been caught since.
+Fabian’s family immigrated to the US when he was 12. His father disappeared when he was 17, forcing Fabian to drop out of school and work at a fast food chain to support his sisters. Fabian was seen running away from the scene of the crime, and his clothes matched the description of the aggressor. He has committed petty crime before but has not been caught since.

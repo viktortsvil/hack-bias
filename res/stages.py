@@ -146,7 +146,7 @@ class Menu(MetaStage):
         self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Welcome to Bias Hack Court! You will be responsible for deciding which of the 5 suspects "
                                                                 "are guilty. Beware: there are hidden biases in the evidence that could lead to a wrong conviction. "
                                                                 "You are also a busy judge, so there is a limited amount of time for each case."
-                                                                "Good luck! Click the gavel to start.", WIDTH / 2, HEIGHT / 3, 'text')
+                                                                "Good luck! Click the gavel to start.", WIDTH / 2, 0.4 * HEIGHT, 'text')
         self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH,
                                    0.2 * HEIGHT, 'button')
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -167,10 +167,10 @@ class Popup:
         self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                  HEIGHT * scalefactor, 'suscard')
-        self.name = CanvasText(canvas, self.fontsize, suspect.name, 0.62 * WIDTH, 0.35 * HEIGHT, "susname")
-        self.gender = CanvasText(canvas, self.fontsize, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
-        self.age = CanvasText(canvas, self.fontsize, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
-        self.record = CanvasText(canvas, self.fontsize, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
+        self.name = CanvasText(canvas, self.fontsize, suspect.name, 0.62 * WIDTH, 0.33 * HEIGHT, "susname")
+        self.gender = CanvasText(canvas, self.fontsize, suspect.sex, 0.62 * WIDTH, 0.36 * HEIGHT, "susgender")
+        self.age = CanvasText(canvas, self.fontsize, suspect.age, 0.62 * WIDTH, 0.39 * HEIGHT, "susage")
+        self.record = CanvasText(canvas, self.fontsize, suspect.record, 0.62 * WIDTH, 0.42 * HEIGHT, "susrecord")
         self.biography = CanvasText(self.canvas, self.fontsize, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT, "susbio")
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
