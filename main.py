@@ -72,17 +72,19 @@ class CanvasObject:
 
 class Suspect:
     def __init__(self, level, person):
-        path = "text/"
-        with open(path + str(level) + "/" + str(person) + ".txt") as file:
+        path = "cases/"
+        with open(path + str(level) + "/suspect_" + str(person) + ".txt") as file:
             lines = file.readlines()
             self.name = lines[0]
-            self.age = lines[1]
-            self.sex = lines[2]
+            self.sex = lines[1]
+            self.age = lines[2]
             self.race = lines[3]
-            self.biography = lines[4]
-            self.evidence = lines[5]
+            self.record = lines[4]
+            self.biography = lines[5]
         self.lineup_path = 'img/characters/lineups/' + str(level) + "/" + str(person) + ".png"
         self.card_path = 'img/characters/photocards/' + str(level) + "/" + str(person) + ".png"
+        self.lineup_image = None
+        self.card_image = None
 
 
 class CanvasText:
@@ -110,19 +112,26 @@ class Popup:
         self.object = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                    HEIGHT * scalefactor, 'popup')
 
+
 class Menu(MetaStage):
     def __init__(self, window):
         super().__init__(window)
         self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Hack-bias", WIDTH / 2, WIDTH / 16, 'title')
-        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8, 'text')
-        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH, 0.2 * HEIGHT, 'button')
+        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8,
+                               'text')
+        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH,
+                                   0.2 * HEIGHT, 'button')
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-class MainStage(MetaStage):
-    character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
 
-    def __init__(self, window):
+class MainStage(MetaStage):
+
+    def __init__(self, window, level=1):
         super().__init__(window)
+
+        self.suspects = []
+        for i in range(5):
+            self.suspects.append(Suspect(LEVEL, i + 1))
 
         self.judge = CanvasObject(self.bg_canvas, "img/judge.png", WIDTH / 2, 0.825 * HEIGHT, 0.3 * WIDTH,
                                   0.35 * HEIGHT, "judge")
@@ -150,13 +159,12 @@ class MainStage(MetaStage):
 
         self.overlay = None
 
-        self.characters = []
-        for i in range(len(self.character_names)):
-            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/lineups/" + self.character_names[i],
+        for i in range(5):
+            self.suspects[i].lineup_image = CanvasObject(self.bg_canvas, self.suspects[i].lineup_path,
                                                 self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
                                                 self.lineup.y,
-                                                self.lineup.width / 5, self.lineup.height, 'char' + str(i)))
-            self.bg_canvas.tag_bind(self.characters[-1].tag, '<ButtonPress-1>', self.func)
+                                                self.lineup.width / 5, self.lineup.height, 'char' + str(i))
+            self.bg_canvas.tag_bind(self.suspects[i].lineup_image.tag, '<ButtonPress-1>', self.func)
 
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
         my_args = [self.bg_canvas, self.time_one, self.time_two, self.time_three, self.time_four]
@@ -165,17 +173,22 @@ class MainStage(MetaStage):
         new_timer.countdown(80)
 
     def func(self, event):
-        for char in self.characters:
-            if char.overlap(event.x, event.y):
+        for char in self.suspects:
+            if char.lineup_image.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/1/1.png")
-                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT,
-                                       "text")
+                self.overlay = Popup(self.bg_canvas, char.card_path)
+                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+                self.text = CanvasText(self.bg_canvas, 25, "", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
+
 
 root = tk.Tk()
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
+LEVEL = 1
 
 root.geometry(f"{WIDTH}x{HEIGHT}+0+0")
 
@@ -184,7 +197,6 @@ root.resizable(width=False, height=False)
 
 mainStage = MainStage(root)
 
-
-suspect = Suspect(1, 1)
+suspect = Suspect(LEVEL, 1)
 print(suspect.name)
 root.mainloop()
