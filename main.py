@@ -20,6 +20,21 @@ class CanvasObject:
         return False
 
 
+class Suspect:
+    def __init__(self, name, age, sex, race, lineup_path, card_path, biography, evidence):
+        self.name = name
+        self.age = age
+        self.sex = sex
+        self.race = race
+        self.lineup_path = lineup_path
+        self.card_path = card_path
+        self.biography = biography
+        self.evidence = evidence
+
+
+
+
+
 class CanvasText:
     font = 'FreeMono'
 
@@ -39,12 +54,14 @@ class MetaStage:
         self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT,
                                        'bcg')
 
+
 class Popup:
-    def __init__(self, window, path):
-        scalefactor = 0.7 #scale to take up part of the screen
-        self.window = window
-        self.bg_canvas = tk.Canvas(window)
-        self.object = CanvasObject(self.bg_canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
+    def __init__(self, canvas, path):
+        scalefactor = 0.7  # scale to take up part of the screen
+
+        self.object = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
+                                   HEIGHT * scalefactor, 'popup')
+
 
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
@@ -61,9 +78,6 @@ class MainStage(MetaStage):
                                    0.35 * HEIGHT, 'lineup')
 
         self.blur = None
-
-        self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 50, 50, "text")
-
 
         self.overlay = None
 
@@ -83,14 +97,16 @@ class MainStage(MetaStage):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
                 scalefactor = 0.7
-                #self.overlay = Popup(self.bg_canvas "img/characters/John_Lincoln.png") not sure why this doesn't work
-                self.overlay = CanvasObject(self.bg_canvas, "img/characters/John_Lincoln.png", WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
+                self.overlay = Popup(self.bg_canvas, "img/characters/John_Lincoln.png")# not sure why this doesn't work
+                #self.overlay = CanvasObject(self.bg_canvas, "img/characters/John_Lincoln.png", WIDTH / 2, HEIGHT / 2,
+                 #                           WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
+
+                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
 
 
 root = tk.Tk()
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
-
 
 root.geometry(f"{WIDTH}x{HEIGHT}+0+0")
 
