@@ -84,7 +84,6 @@ class MainStage(MetaStage):
                                   0.075 * HEIGHT, 'clock')
 
         self.blur = None
-        self.blur = None
         self.overlay = None
         self.backbutton = None
         self.text = None
@@ -103,7 +102,7 @@ class MainStage(MetaStage):
                    EndGameStage, self.window]
         new_timer = MyTimer(my_args)
 
-        new_timer.countdown(10)
+        new_timer.countdown(80)
 
     def choose_suspect(self, event):
         for char in self.suspects:
@@ -112,7 +111,11 @@ class MainStage(MetaStage):
                     self.overlay = Popup(self.bg_canvas, char)
                 elif self.mode == "Judging":
                     print("Judging")
-                    EndGameStage(self.window, True)   # change from always winning to actually checking who won
+                    print(char.name)
+                    if char.name == "Name: Marvin Anderson":
+                        EndGameStage(self.window, True)
+                    else:
+                        EndGameStage(self.window, False)
 
     def use_gavel(self, event):
         if self.mode == "Studying Case":
@@ -122,6 +125,9 @@ class MainStage(MetaStage):
             self.mode = "Studying Case"
             self.bg_canvas.delete(self.judge_text.object)
 
+    def police_report(self, event):
+        if self.evidence.overlap(event.x, event.y):
+            self.overlay = Popup(self.bg_canvas, Suspect(1, 6))
 
 class Menu(MetaStage):
     def __init__(self, window):
@@ -151,11 +157,10 @@ class Popup:
         self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
         self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
         self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
-        self.biography_canvas = tk.Canvas(canvas)
-        self.biography = CanvasText(self.biography_canvas, 25, suspect.biography, 100, 300, "susbio")
-        self.biography_canvas.configure(scrollregion=canvas.bbox("all"))
-
-        self.biography_canvas.place(x=0.2 * WIDTH, y=0.57 * HEIGHT, width=0.4 * WIDTH, height=0.4 * HEIGHT)
+        #self.biography_canvas = tk.Canvas(canvas)
+        self.biography = CanvasText(self.canvas, 25, suspect.biography, 0.66 * WIDTH, 0.62 * HEIGHT, "susbio")
+        #self.biography_canvas.configure(scrollregion=canvas.bbox("all"))
+        #self.biography_canvas.place(x=0.2 * WIDTH, y=0.57 * HEIGHT, width=0.4 * WIDTH, height=0.4 * HEIGHT)
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
@@ -163,12 +168,7 @@ class Popup:
         for attr in dir(self):
             if not attr.startswith("_") and not attr.endswith("canvas"):
                 if not callable(self.__getattribute__(attr)):
-                    if attr == 'biography':
-                        self.biography_canvas.delete(self.__getattribute__(attr).object)
-                    else:
-                        self.canvas.delete(self.__getattribute__(attr).object)
-        self.biography_canvas.destroy()
-
+                    self.canvas.delete(self.__getattribute__(attr).object)
 
 class EndGameStage(MetaStage):
     def __init__(self, window, win):
