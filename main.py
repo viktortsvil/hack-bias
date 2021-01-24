@@ -1,10 +1,6 @@
 import tkinter as tk
+import tkinter.font
 from PIL import Image, ImageTk
-
-
-class Timer:
-    def __init__(self, init_mins, init_secs):
-        pass
 
 
 class CanvasObject:
@@ -16,19 +12,32 @@ class CanvasObject:
         self.tag = tag
         self.image = ImageTk.PhotoImage(Image.open(path).resize((self.width, self.height), Image.ANTIALIAS))
         self.object = canvas.create_image(self.x, self.y, image=self.image, tag=tag)
-        #print(self.object)
+        # print(self.object)
 
     def overlap(self, x, y):
-        if self.x - self.width / 2 <= x <= self.x + self.width / 2 and self.y - self.height / 2 <= y <= self.y + self.height/2:
+        if self.x - self.width / 2 <= x <= self.x + self.width / 2 and self.y - self.height / 2 <= y <= self.y + self.height / 2:
             return True
         return False
+
+
+class CanvasText:
+    font = 'FreeMono'
+
+    def __init__(self, canvas, size, text, x, y, tag):
+        print(tkinter.font.families())
+        self.x = int(x)
+        self.y = int(y)
+        self.tag = tag
+        self.text = text
+        self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text)
 
 
 class MetaStage:
     def __init__(self, window):
         self.window = window
         self.bg_canvas = tk.Canvas(window)
-        self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'bcg')
+        self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT,
+                                       'bcg')
 
 
 class MainStage(MetaStage):
@@ -47,6 +56,10 @@ class MainStage(MetaStage):
 
         self.blur = None
 
+        self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 50, 50, "text")
+
+
+
         self.characters = []
         for i in range(len(self.character_names)):
             self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
@@ -62,11 +75,6 @@ class MainStage(MetaStage):
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                #self.
-                #self.bg_canvas.delete(char.object)
-
-
-
 
 
 root = tk.Tk()
