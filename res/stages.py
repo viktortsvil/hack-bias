@@ -8,6 +8,7 @@ HEIGHT = None
 
 currentStage = None
 
+
 class CanvasObject:
     def __init__(self, canvas, path, x, y, width, height, tag):  # x,y -> center of the image
         self.x = int(x)
@@ -70,7 +71,6 @@ class MainStage(MetaStage):
 
         self.level = level
         self.case = Case(level)
-
 
         self.judge = CanvasObject(self.bg_canvas, "img/judge.png", WIDTH / 2, 0.825 * HEIGHT, 0.3 * WIDTH,
                                   0.35 * HEIGHT, "judge")
@@ -140,14 +140,16 @@ class MainStage(MetaStage):
         if self.evidence.overlap(event.x, event.y):
             self.overlay = Report(self.bg_canvas, "img/characters/photocards/1/1.png", "cases/1/description.txt")
 
+
 class Menu(MetaStage):
     def __init__(self, window):
         super().__init__(window)
         self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Bias Hack", WIDTH / 2, WIDTH / 16, 'title')
-        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Welcome to Bias Hack Court! You will be responsible for deciding which of the 5 suspects "
-                                                                "are guilty. Beware: there are hidden biases in the evidence that could lead to a wrong conviction. "
-                                                                "You are also a busy judge, so there is a limited amount of time for each case."
-                                                                "Good luck! Click the gavel to start.", WIDTH / 2, 0.4 * HEIGHT, 'text')
+        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60),
+                               "Welcome to Bias Hack Court! You will be responsible for deciding which of the 5 suspects "
+                               "are guilty. Beware: there are hidden biases in the evidence that could lead to a wrong conviction. "
+                               "You are also a busy judge, so there is a limited amount of time for each case."
+                               "Good luck! Click the gavel to start.", WIDTH / 2, 0.4 * HEIGHT, 'text')
         self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH,
                                    0.2 * HEIGHT, 'button')
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
@@ -163,7 +165,7 @@ class Popup:
         scalefactor = 0.9  # scale to take up part of the screen
         self.canvas = canvas
         self.wheight = self.canvas.winfo_height()
-        self.fontsize = int(25 * self.wheight / 1080)
+        self.fontsize = int(17 * self.wheight / 1080)
 
         self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
@@ -172,7 +174,8 @@ class Popup:
         self.gender = CanvasText(canvas, self.fontsize, suspect.sex, 0.62 * WIDTH, 0.36 * HEIGHT, "susgender")
         self.age = CanvasText(canvas, self.fontsize, suspect.age, 0.62 * WIDTH, 0.39 * HEIGHT, "susage")
         self.record = CanvasText(canvas, self.fontsize, suspect.record, 0.62 * WIDTH, 0.42 * HEIGHT, "susrecord")
-        self.biography = CanvasText(self.canvas, self.fontsize, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT, "susbio")
+        self.biography = CanvasText(self.canvas, self.fontsize, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT,
+                                    "susbio")
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
@@ -184,6 +187,8 @@ class Popup:
                         self.canvas.delete(self.__getattribute__(attr).object)
                     except:
                         pass
+
+
 class Report:
     def __init__(self, canvas, path, description):
         scalefactor = 0.9  # scale to take up part of the screen
@@ -204,6 +209,7 @@ class Report:
                 if not callable(self.__getattribute__(attr)):
                     self.canvas.delete(self.__getattribute__(attr).object)
 
+
 class EndGameStage(MetaStage):
     def __init__(self, window, win, level):
         super().__init__(window)
@@ -213,13 +219,8 @@ class EndGameStage(MetaStage):
             self.outcome = CanvasObject(self.bg_canvas, "img/lose.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'outcome')
 
         if level < 3:
-            self.next = CanvasObject(self.bg_canvas, "img/background.jpg",
-                                     WIDTH / 2, 0.7 * HEIGHT, 0.2*WIDTH, 0.2 * HEIGHT, "nextlevel")
-            self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png", WIDTH / 2, 0.7 * HEIGHT,
-                                     0.2 * WIDTH, 0.2 * HEIGHT, 'blurnl')
-            self.next = CanvasText(self.bg_canvas, 40, "Next Level", WIDTH / 2, 0.7 * HEIGHT,
-                                   "nextleveltext")
-            self.bg_canvas.tag_bind(self.blur.object, "<ButtonPress-1>", self.nextlevel)
+            self.next = CanvasObject(self.bg_canvas, "img/background_faded.png", 0.69 * WIDTH, 0.86 * HEIGHT,
+                                     0.22 * WIDTH, 0.28 * HEIGHT, 'blurnl')
             self.bg_canvas.tag_bind(self.next.object, "<ButtonPress-1>", self.nextlevel)
         else:
             self.next = CanvasText(self.bg_canvas, 60, "You Reached The End Of The Game!", WIDTH / 2, 0.7 * HEIGHT,
