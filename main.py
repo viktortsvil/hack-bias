@@ -33,9 +33,7 @@ class MyTimer:
         self.minutes = self.add_zero(self.minutes)
         self.seconds = self.add_zero(self.seconds)
         self.image_path = "img/time/%s_Red.png" % self.seconds[1]
-        print(self.image_path)
         self.get_images()
-        print(self.numbers)
         self.bg_canvas.itemconfig(self.time_one.tag, image=self.numbers[self.minutes[0]])
         self.bg_canvas.itemconfig(self.time_two.tag, image=self.numbers[self.minutes[1]])
         self.bg_canvas.itemconfig(self.time_three.tag, image=self.numbers[self.seconds[0]])
@@ -84,7 +82,6 @@ class Suspect:
         self.lineup_path = 'img/characters/lineups/' + str(level) + "/" + str(person) + ".png"
         self.card_path = 'img/characters/photocards/' + str(level) + "/" + str(person) + ".png"
         self.lineup_image = None
-        self.card_image = None
 
 
 class CanvasText:
@@ -95,7 +92,7 @@ class CanvasText:
         self.y = int(y)
         self.tag = tag
         self.text = text
-        self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text)
+        self.object = canvas.create_text(x, y, font=CanvasText.font + " " + str(size), tag=tag, text=text, width=0.5*WIDTH)
 
 
 class MetaStage:
@@ -106,11 +103,22 @@ class MetaStage:
                                        'bcg')
 
 
+
 class Popup:
     def __init__(self, canvas, suspect):
         scalefactor = 0.9  # scale to take up part of the screen
-        self.object = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
-                                   HEIGHT * scalefactor, 'popup')
+        self.card = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
+                                   HEIGHT * scalefactor, 'suscard')
+        self.name = CanvasText(canvas, 25, suspect.name, 0.62 * WIDTH, 0.35*HEIGHT, "susname")
+        self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38*HEIGHT, "susgender")
+        self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41*HEIGHT, "susage")
+        self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44*HEIGHT, "susrecord")
+        self.biography_canvas = tk.Canvas(canvas)
+        self.biography = CanvasText(self.biography_canvas, 25, suspect.biography, 100, 300, "susbio")
+        self.biography_canvas.configure(scrollregion=canvas.bbox("all"))
+
+        self.biography_canvas.place(x=0.2*WIDTH, y=0.57*HEIGHT, width=0.4*WIDTH, height=0.4*HEIGHT)
+
 
 
 class Menu(MetaStage):
