@@ -39,6 +39,12 @@ class MetaStage:
         self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT,
                                        'bcg')
 
+class Popup:
+    def __init__(self, window, path):
+        scalefactor = 0.7 #scale to take up part of the screen
+        self.window = window
+        self.bg_canvas = tk.Canvas(window)
+        self.object = CanvasObject(self.bg_canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
 
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
@@ -59,6 +65,7 @@ class MainStage(MetaStage):
         self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 50, 50, "text")
 
 
+        self.overlay = None
 
         self.characters = []
         for i in range(len(self.character_names)):
@@ -75,13 +82,17 @@ class MainStage(MetaStage):
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
+                scalefactor = 0.7
+                #self.overlay = Popup(self.bg_canvas "img/characters/John_Lincoln.png") not sure why this doesn't work
+                self.overlay = CanvasObject(self.bg_canvas, "img/characters/John_Lincoln.png", WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
 
 
 root = tk.Tk()
-root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
-
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
+
+
+root.geometry(f"{WIDTH}x{HEIGHT}+0+0")
 
 root.attributes("-fullscreen", 1)
 root.resizable(width=False, height=False)
