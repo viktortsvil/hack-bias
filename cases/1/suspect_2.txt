@@ -3,6 +3,4 @@ Gender: M
 Age: 22
 Race: Black
 Criminal record: convicted of petty theft
-After graduating from high school, Lincoln took up a job in construction. His employer is mostly happy with him, only complaining that he has a tendency to be late.
-Lincoln has been formerly convicted of petty theft. The bicycle that had been identified as being used by the assailant was identified by the owner, who said that Lincoln had stolen it from him approximately a half hour before the rape.
-However, the corner store owner across the city vouches that he saw Lincoln there at about the same time as the rape.
+After graduating from high school, Lincoln took up a job in construction. His employer is mostly happy with him, only complaining that he has a tendency to be late. \n Lincoln has been formerly convicted of petty theft. The bicycle that had been identified as being used by the assailant was identified by the owner, who said that Lincoln had stolen it from him approximately a half hour before the rape. \n However, the corner store owner across the city vouches that he saw Lincoln there at about the same time as the rape.
