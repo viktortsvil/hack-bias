@@ -1,5 +1,5 @@
 import tkinter as tk
-from res.stages import Menu
+from res.stages import Menu, Sound
 
 root = tk.Tk()
 WIDTH = root.winfo_screenwidth()

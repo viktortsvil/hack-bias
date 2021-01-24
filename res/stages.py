@@ -2,11 +2,33 @@ import tkinter as tk
 from PIL import ImageTk, Image
 from .timer import MyTimer
 from .entities import Suspect
+from pydub import AudioSegment
+from pydub.playback import play
+import threading
+
+bcg_sound = AudioSegment.from_mp3("sounds/background.mp3")
+book_sound = AudioSegment.from_mp3("sounds/book.mp3")
+book2_sound = AudioSegment.from_mp3("sounds/book2.mp3")
+gavel_sound = AudioSegment.from_mp3("sounds/gavel.mp3")
 
 WIDTH = None
 HEIGHT = None
 
 currentStage = None
+
+class Sound:
+    sounds = []
+    @staticmethod
+    def play_sound(sound):
+        x = threading.Thread(target=play, args=(sound,), daemon=True)
+        x.start()
+        Sound.sounds.append(x)
+
+    @staticmethod
+    def stop_sounds():
+        for x in Sound.sounds:
+            x.join()
+
 
 
 class CanvasObject:
@@ -122,11 +144,13 @@ class MainStage(MetaStage):
             if char.lineup_image.overlap(event.x, event.y):
                 if self.mode == "Studying Case":
                     self.overlay = Popup(self.bg_canvas, char)
+                    Sound.play_sound(book2_sound)
                 elif self.mode == "Judging":
                     if char.name.split(": ")[1] == self.case.convict:
                         EndGameStage(self.window, True, self.level)
                     else:
                         EndGameStage(self.window, False, self.level)
+                    Sound.play_sound(gavel_sound)
 
     def use_gavel(self, event):
         if self.mode == "Studying Case":
@@ -139,6 +163,8 @@ class MainStage(MetaStage):
     def police_report(self, event):
         if self.evidence.overlap(event.x, event.y):
             self.overlay = Report(self.bg_canvas, "img/folder_background.png", self.case.desc)
+            Sound.play_sound(book_sound)
+
 
 
 class Menu(MetaStage):
@@ -218,7 +244,7 @@ class EndGameStage(MetaStage):
 
         if level < 3:
             self.next = CanvasObject(self.bg_canvas, "img/transparent.png", 0.69 * WIDTH, 0.86 * HEIGHT,
-                                     0.22 * WIDTH, 0.28 * HEIGHT, 'blurnl')
+                                     0.22 * WIDTH, 0.28 * HEIGHT, 'blur')
             self.bg_canvas.tag_bind(self.next.object, "<ButtonPress-1>", self.nextlevel)
         else:
             pass
