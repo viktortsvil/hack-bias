@@ -48,6 +48,15 @@ class MetaStage:
         currentStage = self
 
 
+class Case:
+    def __init__(self, level):
+        with open("cases/" + str(level) + "/description.txt") as file:
+            lines = file.readlines()
+            self.convict = lines[0].split(": ")[1]
+            self.desc = lines[1]
+            self.level = level
+
+
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
 
@@ -58,6 +67,10 @@ class MainStage(MetaStage):
             self.suspects.append(Suspect(level, i + 1))
 
         self.mode = "Studying Case"
+
+        self.level = level
+        self.case = Case(level)
+
 
         self.judge = CanvasObject(self.bg_canvas, "img/judge.png", WIDTH / 2, 0.825 * HEIGHT, 0.3 * WIDTH,
                                   0.35 * HEIGHT, "judge")
@@ -87,7 +100,6 @@ class MainStage(MetaStage):
         self.overlay = None
         self.backbutton = None
         self.text = None
-
         self.judge_text = None
 
         for i in range(5):
@@ -99,7 +111,7 @@ class MainStage(MetaStage):
 
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
         my_args = [self.bg_canvas, self.time_one, self.time_two, self.time_three, self.time_four, WIDTH, HEIGHT,
-                   EndGameStage, self.window]
+                   EndGameStage, self.window, level]
         new_timer = MyTimer(my_args)
 
         new_timer.countdown(80)
@@ -110,12 +122,10 @@ class MainStage(MetaStage):
                 if self.mode == "Studying Case":
                     self.overlay = Popup(self.bg_canvas, char)
                 elif self.mode == "Judging":
-                    print("Judging")
-                    print(char.name)
-                    if char.name == "Name: Marvin Anderson":
-                        EndGameStage(self.window, True)
+                    if char.name.split(": ")[1] == self.case.convict:
+                        EndGameStage(self.window, True, self.level)
                     else:
-                        EndGameStage(self.window, False)
+                        EndGameStage(self.window, False, self.level)
 
     def use_gavel(self, event):
         if self.mode == "Studying Case":
@@ -157,10 +167,7 @@ class Popup:
         self.gender = CanvasText(canvas, 25, suspect.sex, 0.62 * WIDTH, 0.38 * HEIGHT, "susgender")
         self.age = CanvasText(canvas, 25, suspect.age, 0.62 * WIDTH, 0.41 * HEIGHT, "susage")
         self.record = CanvasText(canvas, 25, suspect.record, 0.62 * WIDTH, 0.44 * HEIGHT, "susrecord")
-        #self.biography_canvas = tk.Canvas(canvas)
         self.biography = CanvasText(self.canvas, 25, suspect.biography, 0.66 * WIDTH, 0.62 * HEIGHT, "susbio")
-        #self.biography_canvas.configure(scrollregion=canvas.bbox("all"))
-        #self.biography_canvas.place(x=0.2 * WIDTH, y=0.57 * HEIGHT, width=0.4 * WIDTH, height=0.4 * HEIGHT)
         self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
@@ -171,11 +178,27 @@ class Popup:
                     self.canvas.delete(self.__getattribute__(attr).object)
 
 class EndGameStage(MetaStage):
-    def __init__(self, window, win):
+    def __init__(self, window, win, level):
         super().__init__(window)
         if win:
             self.outcome = CanvasText(self.bg_canvas, 50, "WON", WIDTH / 2, HEIGHT / 2, 'outcome')
         else:
             self.outcome = CanvasText(self.bg_canvas, 50, "LOSS", WIDTH / 2, HEIGHT / 2, 'outcome')
-
+        if level < 3:
+            self.next = CanvasObject(self.bg_canvas, "img/background.jpg",
+                                     WIDTH / 2, 0.7 * HEIGHT, 0.2*WIDTH, 0.2 * HEIGHT, "nextlevel")
+            self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png", WIDTH / 2, 0.7 * HEIGHT,
+                                     0.2 * WIDTH, 0.2 * HEIGHT, 'blurnl')
+            self.next = CanvasText(self.bg_canvas, 40, "Next Level", WIDTH / 2, 0.7 * HEIGHT,
+                                   "nextleveltext")
+            self.bg_canvas.tag_bind(self.blur.object, "<ButtonPress-1>", self.nextlevel)
+            self.bg_canvas.tag_bind(self.next.object, "<ButtonPress-1>", self.nextlevel)
+        else:
+            self.next = CanvasText(self.bg_canvas, 60, "You Reached The End Of The Game!", WIDTH / 2, 0.7 * HEIGHT,
+                                   "endgame")
+        self.level = level
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+    def nextlevel(self, event):
+        global currentStage
+        currentStage = MainStage(self.window, self.level + 1)
