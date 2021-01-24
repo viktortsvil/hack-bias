@@ -2,3 +2,4 @@
 /venv/*
 /text/
 /res/__pycache__/
+/res/__pycache__/*
