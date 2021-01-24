@@ -20,7 +20,6 @@ class MyTimer:
             self.remaining = remaining
 
         if self.remaining <= 0:
-            # END GAME
             pass
         else:
             self.remaining = self.remaining - 1
@@ -147,7 +146,7 @@ class MainStage(MetaStage):
                                      0.06 * HEIGHT, 'time_three')
         self.time_four = CanvasObject(self.bg_canvas, "img/time/0_Red.png", 0.931 * WIDTH, 0.1 * HEIGHT, 0.051 * WIDTH,
                                      0.06 * HEIGHT, 'time_four')
-        self.clock = CanvasObject(self.bg_canvas, "img/clock.png", 0.971 * WIDTH, 0.093 * HEIGHT, 0.04 * WIDTH,
+        self.clock = CanvasObject(self.bg_canvas, "img/Clock.png", 0.971 * WIDTH, 0.093 * HEIGHT, 0.04 * WIDTH,
                                      0.075 * HEIGHT, 'clock')
 
         self.blur = None
