@@ -176,7 +176,7 @@ class Popup:
         self.record = CanvasText(canvas, self.fontsize, suspect.record, 0.62 * WIDTH, 0.42 * HEIGHT, "susrecord")
         self.biography = CanvasText(self.canvas, self.fontsize, suspect.biography, 0.64 * WIDTH, 0.62 * HEIGHT,
                                     "susbio")
-        self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
+        self.backbutton = CanvasObject(canvas, "img/back-button.png", 0.845*WIDTH, 0.2*HEIGHT, 100, 100, 'backbutton')
         canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
 
     def back(self, event):
