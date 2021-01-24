@@ -45,6 +45,8 @@ class MainStage(MetaStage):
         self.lineup = CanvasObject(self.bg_canvas, "img/lineup.png", 0.5 * WIDTH, 0.375 * HEIGHT, 0.6 * WIDTH,
                                    0.35 * HEIGHT, 'lineup')
 
+        self.blur = None
+
         self.characters = []
         for i in range(len(self.character_names)):
             self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
@@ -58,7 +60,10 @@ class MainStage(MetaStage):
     def func(self, event):
         for char in self.characters:
             if char.overlap(event.x, event.y):
-                self.bg_canvas.delete(char.object)
+                self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
+                                         self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
+                #self.
+                #self.bg_canvas.delete(char.object)
 
 
 
