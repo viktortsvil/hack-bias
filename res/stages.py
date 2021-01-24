@@ -219,7 +219,7 @@ class EndGameStage(MetaStage):
             self.outcome = CanvasObject(self.bg_canvas, "img/lose.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'outcome')
 
         if level < 3:
-            self.next = CanvasObject(self.bg_canvas, "img/background_faded.png", 0.69 * WIDTH, 0.86 * HEIGHT,
+            self.next = CanvasObject(self.bg_canvas, "img/transparent.png", 0.69 * WIDTH, 0.86 * HEIGHT,
                                      0.22 * WIDTH, 0.28 * HEIGHT, 'blurnl')
             self.bg_canvas.tag_bind(self.next.object, "<ButtonPress-1>", self.nextlevel)
         else:
