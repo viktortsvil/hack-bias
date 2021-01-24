@@ -1,7 +1,8 @@
 import tkinter as tk
 import tkinter.font
 from PIL import Image, ImageTk
-
+from os import listdir
+from os.path import isfile, join
 
 class CanvasObject:
     def __init__(self, canvas, path, x, y, width, height, tag):  # x,y -> center of the image
@@ -21,6 +22,16 @@ class CanvasObject:
 
 
 class Suspect:
+
+    @staticmethod
+    def parse(round=1):
+        lineuppath = 'img/characters/lineups/'
+        photocardpath = 'img/characters/photocards'
+        lineupfiles = [f for f in listdir(lineuppath) if isfile(join(lineuppath, f))]
+        photocardfiles = [f for f in listdir(photocardpath) if isfile(join(photocardpath, f))]
+
+
+
     def __init__(self, name, age, sex, race, lineup_path, card_path, biography, evidence):
         self.name = name
         self.age = age
@@ -102,6 +113,7 @@ class MainStage(MetaStage):
 
 
 root = tk.Tk()
+Suspect.parse()
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
 
