@@ -83,7 +83,7 @@ class MainStage(MetaStage):
 
         self.characters = []
         for i in range(len(self.character_names)):
-            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
+            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/lineups/" + self.character_names[i],
                                                 self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
                                                 self.lineup.y,
                                                 self.lineup.width / 5, self.lineup.height, 'char' + str(i)))
@@ -97,10 +97,7 @@ class MainStage(MetaStage):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
                 scalefactor = 0.7
-                self.overlay = Popup(self.bg_canvas, "img/characters/John_Lincoln.png")# not sure why this doesn't work
-                #self.overlay = CanvasObject(self.bg_canvas, "img/characters/John_Lincoln.png", WIDTH / 2, HEIGHT / 2,
-                 #                           WIDTH * scalefactor, HEIGHT * scalefactor, 'popup')
-
+                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/John_Lincoln.png")
                 self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT, "text")
 
 
