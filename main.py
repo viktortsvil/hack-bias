@@ -71,23 +71,18 @@ class CanvasObject:
 
 
 class Suspect:
-
-    @staticmethod
-    def parse(round=1):
-        lineuppath = 'img/characters/lineups/'
-        photocardpath = 'img/characters/photocards'
-        lineupfiles = [f for f in listdir(lineuppath) if isfile(join(lineuppath, f))]
-        photocardfiles = [f for f in listdir(photocardpath) if isfile(join(photocardpath, f))]
-
-    def __init__(self, name, age, sex, race, lineup_path, card_path, biography, evidence):
-        self.name = name
-        self.age = age
-        self.sex = sex
-        self.race = race
-        self.lineup_path = lineup_path
-        self.card_path = card_path
-        self.biography = biography
-        self.evidence = evidence
+    def __init__(self, level, person):
+        path = "text/"
+        with open(path + str(level) + "/" + str(person) + ".txt") as file:
+            lines = file.readlines()
+            self.name = lines[0]
+            self.age = lines[1]
+            self.sex = lines[2]
+            self.race = lines[3]
+            self.biography = lines[4]
+            self.evidence = lines[5]
+        self.lineup_path = 'img/characters/lineups/' + str(level) + "/" + str(person) + ".png"
+        self.card_path = 'img/characters/photocards/' + str(level) + "/" + str(person) + ".png"
 
 
 class CanvasText:
@@ -169,14 +164,12 @@ class MainStage(MetaStage):
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                scalefactor = 0.7
-                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/1John_Lincoln.png")
+                self.overlay = Popup(self.bg_canvas, "img/characters/photocards/1/1.png")
                 self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT,
                                        "text")
 
 
 root = tk.Tk()
-Suspect.parse()
 WIDTH = root.winfo_screenwidth()
 HEIGHT = root.winfo_screenheight()
 
@@ -187,4 +180,7 @@ root.resizable(width=False, height=False)
 
 mainStage = MainStage(root)
 
+
+suspect = Suspect(1, 1)
+print(suspect.name)
 root.mainloop()
