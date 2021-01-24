@@ -107,6 +107,9 @@ class MetaStage:
 class Popup:
     def __init__(self, canvas, suspect):
         scalefactor = 0.9  # scale to take up part of the screen
+        self.canvas = canvas
+
+        self.blur = CanvasObject(self.canvas, "img/background_faded.png", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 'blur')
         self.card = CanvasObject(canvas, suspect.card_path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                    HEIGHT * scalefactor, 'suscard')
         self.name = CanvasText(canvas, 25, suspect.name, 0.62 * WIDTH, 0.35*HEIGHT, "susname")
@@ -118,6 +121,18 @@ class Popup:
         self.biography_canvas.configure(scrollregion=canvas.bbox("all"))
 
         self.biography_canvas.place(x=0.2*WIDTH, y=0.57*HEIGHT, width=0.4*WIDTH, height=0.4*HEIGHT)
+        self.backbutton = CanvasObject(canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
+        canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
+
+    def back(self, event):
+        for attr in dir(self):
+            if not attr.startswith("_") and not attr.endswith("canvas"):
+                if not callable(self.__getattribute__(attr)):
+                    if attr == 'biography':
+                        self.biography_canvas.delete(self.__getattribute__(attr).object)
+                    else:
+                        self.canvas.delete(self.__getattribute__(attr).object)
+        self.biography_canvas.destroy()
 
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
@@ -156,29 +171,24 @@ class MainStage(MetaStage):
         self.backbutton = None
         self.text = None
 
+        for i in range(5):
+            self.suspects[i].lineup_image = CanvasObject(self.bg_canvas, self.suspects[i].lineup_path,
+                                                self.lineup.x + (0.2 * i - 0.4) * self.lineup.width,
+                                                self.lineup.y,
+                                                self.lineup.width / 5, self.lineup.height, 'char' + str(i))
+            self.bg_canvas.tag_bind(self.suspects[i].lineup_image.tag, '<ButtonPress-1>', self.func)
+
         self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
         my_args = [self.bg_canvas, self.time_one, self.time_two, self.time_three, self.time_four]
         new_timer = MyTimer(my_args)
 
         new_timer.countdown(80)
 
-    def back(self, event):
-        if self.backbutton.overlap(event.x, event.y):
-            self.blur = None
-            self.overlay = None
-            self.bg_canvas.delete(self.backbutton.object)
-            self.bg_canvas.delete(self.text.object)
-
     def func(self, event):
         for char in self.suspects:
             if char.lineup_image.overlap(event.x, event.y):
-                self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
-                                         self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
                 self.overlay = Popup(self.bg_canvas, char)
-                self.backbutton = CanvasObject(self.bg_canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
-                self.bg_canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
-                self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT,
-                                       "text")
+
 
 class Menu(MetaStage):
     def __init__(self, window):
