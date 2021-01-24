@@ -2,7 +2,6 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 
-
 def hdtor(val, w=True):
     if w:
         return val / 1920
@@ -20,41 +19,40 @@ class Timer:
         pass
 
 
+class CanvasObject:
+    def __init__(self, canvas, path, x, y, width, height):  # x,y -> center of the image
+        self.x = int(x)
+        self.y = int(y)
+        self.width = int(width)
+        self.height = int(height)
+        self.image = ImageTk.PhotoImage(Image.open(path).resize((self.width, self.height), Image.ANTIALIAS))
+        self.object = canvas.create_image(self.x, self.y, image=self.image)
+
+
 class MainStage:
+    character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
+
     def __init__(self, window):
         self.window = window
 
-        self.background_image = Image.open("img/background.jpg").resize((WIDTH, HEIGHT), Image.ANTIALIAS)
-        self.background_image = ImageTk.PhotoImage(self.background_image)
-        self.background_label = tk.Label(window, image=self.background_image)
-        self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        self.bg_canvas = tk.Canvas(window)
 
-        self.drop_menu_btn = tk.Button(window, text="Menu", bg='red', command=None)
-        self.drop_menu_btn.place(relx=0.01, rely=0.01, width=rtoa(hdtor(50)), height=rtoa(hdtor(50, False), False))
+        self.background = CanvasObject(self.bg_canvas, "img/background.jpg", WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT)
+        self.judge = CanvasObject(self.bg_canvas, "img/judge.png", WIDTH / 2, 0.825 * HEIGHT, 0.3 * WIDTH,
+                                  0.35 * HEIGHT)
+        self.evidence = CanvasObject(self.bg_canvas, "img/folder.png", 0.226 * WIDTH, 0.718 * HEIGHT, 0.109 * WIDTH,
+                                     0.257 * HEIGHT)
+        self.decide = CanvasObject(self.bg_canvas, "img/gavel.png", 0.786 * WIDTH, 0.733 * HEIGHT, 0.163 * WIDTH,
+                                   0.244 * HEIGHT)
+        self.lineup = CanvasObject(self.bg_canvas, "img/lineup.png", 0.5 * WIDTH, 0.375 * HEIGHT, 0.6 * WIDTH,
+                                   0.35 * HEIGHT)
 
-        self.suspect_frame = tk.Frame(window, bg='blue')
-        self.suspect_frame.place(relx=0.2, rely=0.05, width=rtoa(0.6), height=rtoa(0.3))
+        self.characters = []
+        for i in range(len(self.character_names)):
+            self.characters.append(CanvasObject(self.bg_canvas, "img/characters/" + self.character_names[i],
+                                                self.lineup.x + (0.3 + 0.2 * i) * self.lineup.width,0, self.lineup.width / 5, self.lineup.height))
 
-        self.judge_canvas = tk.Canvas(window)
-        self.judge_canvas.place(relx=0.35, rely=0.65, relwidth=0.3, relheight=0.35)
-        self.judge_image = ImageTk.PhotoImage(Image.open("img/judge.png").resize((int(0.3*WIDTH), int(0.35*HEIGHT)), Image.ANTIALIAS))
-        self.judge_canvas.create_image(int(0.3*WIDTH / 2), int(0.35*HEIGHT / 2), image=self.judge_image)
-
-        self.evidence_image = ImageTk.PhotoImage(Image.open("img/folder.png").resize((int(0.109*WIDTH), int(0.257*HEIGHT)), Image.ANTIALIAS))
-        self.evidence_btn = tk.Button(window, image=self.evidence_image, bg='white', command=None)
-        self.evidence_btn.place(relx=0.172, rely=0.667, relwidth=0.109, relheight=0.257)
-
-        self.decide_image = ImageTk.PhotoImage(Image.open("img/gavel.png").resize((int(0.163*WIDTH), int(0.244*HEIGHT)), Image.ANTIALIAS))
-        self.decide_btn = tk.Button(window, image=self.decide_image, bg='white', command=None)
-        self.decide_btn.place(relx=0.706, rely=0.671, relwidth=0.163, relheight=0.244)
-
-        self.suspect_buttons = []
-        for i in range(5):
-            self.suspect_buttons.append(tk.Button(self.suspect_frame, text=f"Suspect{i+1}", fg='green', command=None,
-                                                  borderwidth=2))
-            self.suspect_buttons[-1].place(relx=0.2*i, rely=0.2, relwidth=0.2, relheight=0.8)
-
-
+        self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 
 root = tk.Tk()
@@ -65,10 +63,6 @@ HEIGHT = root.winfo_screenheight()
 
 root.attributes("-fullscreen", 1)
 root.resizable(width=False, height=False)
-try:
-    root.attributes('-transparentcolor', 'red')
-except:
-    pass
 
 mainStage = MainStage(root)
 
