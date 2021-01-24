@@ -2,18 +2,6 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 
-def hdtor(val, w=True):
-    if w:
-        return val / 1920
-    return val / 1080
-
-
-def rtoa(val, w=True):  # relative coordinate to absolute
-    if w is True:
-        return val * WIDTH
-    return val * HEIGHT
-
-
 class Timer:
     def __init__(self, init_mins, init_secs):
         pass
