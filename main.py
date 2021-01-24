@@ -33,9 +33,7 @@ class MyTimer:
         self.minutes = self.add_zero(self.minutes)
         self.seconds = self.add_zero(self.seconds)
         self.image_path = "img/time/%s_Red.png" % self.seconds[1]
-        print(self.image_path)
         self.get_images()
-        print(self.numbers)
         self.bg_canvas.itemconfig(self.time_one.tag, image=self.numbers[self.minutes[0]])
         self.bg_canvas.itemconfig(self.time_two.tag, image=self.numbers[self.minutes[1]])
         self.bg_canvas.itemconfig(self.time_three.tag, image=self.numbers[self.seconds[0]])
@@ -115,14 +113,6 @@ class Popup:
         self.object = CanvasObject(canvas, path, WIDTH / 2, HEIGHT / 2, WIDTH * scalefactor,
                                    HEIGHT * scalefactor, 'popup')
 
-class Menu(MetaStage):
-    def __init__(self, window):
-        super().__init__(window)
-        self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Hack-bias", WIDTH / 2, WIDTH / 16, 'title')
-        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8, 'text')
-        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH, 0.2 * HEIGHT, 'button')
-        self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
-
 class MainStage(MetaStage):
     character_names = ["alien.png", 'blue_coat_guy.png', 'football_shirt.png', 'lady.png', 'tall_man.png']
 
@@ -152,8 +142,9 @@ class MainStage(MetaStage):
                                   0.075 * HEIGHT, 'clock')
 
         self.blur = None
-
         self.overlay = None
+        self.backbutton = None
+        self.text = None
 
         self.characters = []
         for i in range(len(self.character_names)):
@@ -169,26 +160,49 @@ class MainStage(MetaStage):
 
         new_timer.countdown(80)
 
+    def back(self, event):
+        if self.backbutton.overlap(event.x, event.y):
+            self.blur = None
+            self.overlay = None
+            self.bg_canvas.delete(self.backbutton.object)
+            self.bg_canvas.delete(self.text.object)
+
     def func(self, event):
         for char in self.characters:
             if char.overlap(event.x, event.y):
                 self.blur = CanvasObject(self.bg_canvas, "img/background_faded.png",
                                          self.background.x, self.background.y, WIDTH, HEIGHT, 'blur')
-                scalefactor = 0.7
                 self.overlay = Popup(self.bg_canvas, "img/characters/photocards/1John_Lincoln.png")
+                self.backbutton = CanvasObject(self.bg_canvas, "img/back-button.png", WIDTH - 50, 50, 100, 100, 'backbutton')
+                self.bg_canvas.tag_bind(self.backbutton.tag, '<ButtonPress-1>', self.back)
                 self.text = CanvasText(self.bg_canvas, 25, "hello hello\nbreak line", 0.49 * WIDTH, 0.37 * HEIGHT,
                                        "text")
 
+class Menu(MetaStage):
+    def __init__(self, window):
+        super().__init__(window)
+        self.title = CanvasText(self.bg_canvas, int(WIDTH / 32), "Hack-bias", WIDTH / 2, WIDTH / 16, 'title')
+        self.text = CanvasText(self.bg_canvas, int(WIDTH / 60), "Our description goes here", WIDTH / 2, WIDTH / 8, 'text')
+        self.button = CanvasObject(self.bg_canvas, "img/gavel.png", WIDTH / 2, HEIGHT - WIDTH / 8, 0.15 * WIDTH, 0.2 * HEIGHT, 'button')
+        self.bg_canvas.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.bg_canvas.tag_bind(self.button.tag, '<ButtonPress-1>', self.movetostage)
+    def movetostage(self, event):
+        if self.button.overlap(event.x, event.y):
+            mainStage = MainStage(root)
+
 root = tk.Tk()
 Suspect.parse()
-WIDTH = root.winfo_screenwidth()
-HEIGHT = root.winfo_screenheight()
+#WIDTH = root.winfo_screenwidth()
+#HEIGHT = root.winfo_screenheight()
+
+WIDTH = 1920
+HEIGHT = 1080
 
 root.geometry(f"{WIDTH}x{HEIGHT}+0+0")
 
 root.attributes("-fullscreen", 1)
 root.resizable(width=False, height=False)
 
-mainStage = MainStage(root)
+mainStage = Menu(root)
 
 root.mainloop()
